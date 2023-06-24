@@ -1,0 +1,31 @@
+# setwd('..')
+source("functions2.R")
+# d <- attach.big.matrix("cohort23_10p.desc")
+load('cohort3_10p.RData')
+# group3 <- !is.na(d[,12]) & d[,12]>=0
+group3 <- data$time >= as.numeric(data$TX1DATE)
+# uniq_id <- unique(d[group3,13])
+uniq_id <- unique(data$USRDS_ID[group3])
+set.seed(123)
+id_by_folds <- split(sample(uniq_id), rep(1:5, length.out = length(uniq_id)))
+args <- commandArgs(trailingOnly = TRUE)
+h <- as.numeric(args[1])
+fold <- as.numeric(args[2])
+# train <- d[group3,13] %in% unlist(id_by_folds[-fold])
+train <- data$USRDS_ID[group3] %in% unlist(id_by_folds[-fold])
+# test <- d[group3,13] %in% id_by_folds[[fold]]
+test <- data$USRDS_ID[group3] %in% id_by_folds[[fold]]
+# load('y_minus_xb_h=58.RData')
+pres <- c()
+for (i in 1:5) {
+    temp <- readRDS(paste0('real_mixed_fit12/all_pres_h=300_part=', i))
+    pres <- c(pres, temp)
+}
+# fit <- kfitp(matrix(1, sum(train)), y_minus_xb[train], d[group3, 12][train], d[group3, 11][train], d[group3, 12][test], d[group3, 11][test], h, 19)
+# fit <- with(data[group3,], kfitp(cbind(1, DTYPE == 'C')[train,], pres[train], (time - as.numeric(TX1DATE))[train], (as.numeric(DIED) - time)[train], (time - as.numeric(TX1DATE))[test], (as.numeric(DIED) - time)[test], h, 19))
+fit <- with(data[group3,], kfit.p(matrix(1, sum(train)), pres[train], (time - as.numeric(TX1DATE))[train], (as.numeric(DIED) - time)[train], (time - as.numeric(TX1DATE))[test], (as.numeric(DIED) - time)[test], h, 19))
+# save(fit, file = paste0('real_mixed_cv2_h=', args[1], '_fold=', args[2], '.RData'))
+# res <- d[group3, 9][test] - c(fit)
+# res <- pres[test] - rowSums(cbind(1, data$DTYPE[group3][test] == 'C') * fit)
+res <- pres[test] - c(fit)
+data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv2/all_h=300_h2=', args[1], '_fold=', args[2]))

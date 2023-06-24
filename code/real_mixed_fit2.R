@@ -1,0 +1,18 @@
+source("functions2.R")
+load('cohort3_10p.RData')
+group3 <- data$time >= as.numeric(data$TX1DATE)
+# pres <- c()
+# for (i in 1:5) {
+#     temp <- readRDS(paste0('real_mixed_fit12/all_pres_h=300_part=', i))
+#     pres <- c(pres, temp)
+# }
+load("real_mixed_fit12/hs_pres_h=200.RData")
+# result <- kresp(matrix(1, sum(group3)), matrix(y_minus_xb), d[group3, 12], d[group3, 11], 1:sum(group3), 10, 19)
+# result <- kres(matrix(1, sum(group3)), matrix(y_minus_xb), d[group3, 12], d[group3, 11], 1:10, 12)
+# res <- with(data[group3,], kresp(cbind(1, DTYPE == 'C'), as.matrix(pres), time - as.numeric(TX1DATE), as.numeric(DIED) - time, which(partition == args[1]), 9.5, 19))
+res <- with(data[group3,], kres.p(matrix(1, sum(group3)), as.matrix(pres), time - as.numeric(TX1DATE), as.numeric(DIED) - time, 1:sum(group3), 13.7, 19))
+teval <- c(seq(0, 800, 8), seq(0, 1600, 16), seq(0, 2200, 22))
+seval <- c(seq(800, 0, -8), seq(1600, 0, -16), seq(2200, 0, -22))
+coef <- with(data[group3,], kfit(matrix(1, sum(group3)), pres, time - as.numeric(TX1DATE), as.numeric(DIED) - time, teval, seval, 13.7))
+var <- with(data[group3,], sandwich(matrix(1, sum(group3)), res, USRDS_ID, time - as.numeric(TX1DATE), as.numeric(DIED) - time, teval, seval, 13.7))
+list(coef = coef, var = var) %>% saveRDS('real_mixed_fit2/hs_h=200_h2=13.7')

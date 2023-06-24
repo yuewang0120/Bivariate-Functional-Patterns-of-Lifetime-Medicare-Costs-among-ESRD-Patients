@@ -1,0 +1,16 @@
+# setwd('..')
+source("functions2.R")
+# d <- attach.big.matrix("cohort23_10p.desc")
+load('cohort2_10p.RData')
+data2 <- data
+load('cohort3_10p.RData')
+# group2 <- is.na(d[,12])
+# group3 <- !is.na(d[,12]) & d[,12]>=0
+group3 <- data$time >= as.numeric(data$TX1DATE)
+part <- sort(rep(1:5, length.out = sum(group3)))
+# partition <- sort(rep(1:5, length.out = nrow(data)))
+args <- commandArgs(trailingOnly = TRUE)
+# print(args)
+# fit <- kfitp(cbind(1, d[group2, 1:8]), d[group2, 9], d[group2, 10], d[group2, 11], d[group3, 10][partition==args[1]], d[group3, 11][partition==args[1]], 58, 19)
+fit <- with(data2, kfit.pa(cbind(1, RACE == 2, RACE > 2, SEX == 2, INC_AGE - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30), log((ip+op+sn+hh+hs)/100+1), time - as.numeric(FIRST_SE), as.numeric(DIED) - time, (data$time - as.numeric(data$FIRST_SE))[group3][part==args[1]], (as.numeric(data$DIED) - data$time)[group3][part==args[1]], 300, 19))
+with(data[group3,][part==args[1],], log((ip+op+sn+hh+hs)/100+1) - rowSums(cbind(1, RACE == 2, RACE > 2, SEX == 2, INC_AGE - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12/all_pres_h=300_part=', args[1]))
