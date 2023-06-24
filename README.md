@@ -26,111 +26,118 @@ Researchers could use the R scripts and Shell scripts to reproduce the results i
 
 ### 1. Simulation for the Semi-Varying Coefficient Model (Section 4.1)
 
-A bandwidth of 1.12 is used for simulation, which is an average of the cross-validated bandwidths on 10 simulated datasets. For replication of the 10 bandwidths readers can run
+A bandwidth of 1.12 is used for simulation, which is an average of the cross-validated bandwidths on 10 simulated datasets. For replication of the 10 bandwidths readers can run the following code in the command line
 
 ```console
 sh simu_semi_cv.sh
 Rscript simu_semi_cv_merge.R
 ```
 
-Run simulation with 1000 replications with the selected bandwidth $h=0.66$
+Run simulation with 500 replications using the undersmoothed bandwidth $h=1.12$
 
-```r
-source('code/simu.R')
+```console
+sh simu_semi_fit.sh
 ```
 
-This will generate intermediate results, stored in `simu_result.RData` under `code` folder. Once this is done, run
+This will generate intermediate results, stored under `code` folder. Once this is done, run
 
-```r
-source('code/figure1-2.R')
+```console
+Rscript simu_semi_plot.R
 ```
 
-to generate Figure 1 and 2 under the same folder.
+to generate Figure 1 under `code` folder.
 
-### 2. A Separate Simulation with $\beta_3=0.5$ (Section 4)
+### 2. Simulation for the Mixed-Time Varying-Coefficient Mode (Model 4.2)
 
-A bandwidth of 0.68 is used for simulation, this can be validated by replicating the cross-validation procedure
+Bandwidths of 2.1 and 1.1 are used for the first and second stages of the simulation, each of which is an average of the cross-validated bandwidths on 10 simulated datasets. For replication of the 10 bandwidths in the first stage, readers can run the following code 
 
-```r
-source('code/simu_cv_beta3=0.5.R')
+```console
+sh simu_mixed_cv1.sh
+Rscript simu_mixed_cv1_merge.R
 ```
 
-Run simulation with 1000 replications with the selected bandwidth $h=0.68$
+Then run first-stage simulation with 500 replications using the selected bandwidth $h_1=2.1$, this will create the response for the second stage
 
-```r
-source('code/simu_beta3=0.5.R')
+```console
+sh simu_semi_fit12.sh
 ```
 
-This will generate intermediate results, stored in `simu_result_beta3=0.5.RData` under `code` folder. Once this is done, run
+After that, we can obtain the second-stage bandwidths on 10 simulated datasets by running
 
-```r
-source('code/table1-2.R')
+```console
+sh simu_mixed_cv2.sh
+Rscript simu_mixed_cv2_merge.R
 ```
 
-to generate Table 1 and 2 under the same folder.
+Run second-stage simulation with 500 replications using the undersmoothed bandwidth $h_2=1.1$
 
-### 3. ESRD Application with A Reduced Model (Section 5, with Pseudo Dataset)
+```console
+sh simu_semi_fit2.sh
+```
+
+This will generate intermediate results, stored under `code` folder. Once this is done, run
+
+```console
+Rscript simu_mixed_plot.R
+```
+
+to generate Figure 2 under the same folder.
+
+### 3. ESRD Data Analysis of Cost Difference Associated with Waitlisting (Section 5.1)
 
 Replicate cross-validation
 
-```r
-source('code/pseudo_cv.R')
+```console
+sh real_semi_cv.sh
+Rscript real_semi_cv_merge.R
 ```
 
 Fit the model with the selected bandwidth
 
-```r
-source('code/pseudo_fit.R')
+```console
+Rscript real_semi_fit.R
 ```
 
-This will generate the intermediate result `pseudo_fit.RData` under `code` folder. Run
+This will generate the intermediate result under `code` folder. Run
 
 ```r
-source('code/figure3.R')
+Rscript real_semi_plot.R
 ```
 
-to generate Figure 3. Run
+to generate Figure 3. 
 
-```r
-source('code/table3-4.R')
+### 4. ESRD Data Analysis of Cost Difference Associated with Transplant (Section 5.2)
+
+Replicate first-stage cross-validation
+
+```console
+sh real_mixed_cv1.sh
+Rscript real_mixed_cv1_merge.R
 ```
 
-to generate Table 3 and 4.
+Create the response for the second stage
 
-### 4. ESRD Application with A Full Model (Section C in the Online Supplementary Material, with Pseudo Dataset)
-
-Replicate cross-validation
-
-```r
-source('code/pseudo_full_cv.R')
+```console
+Rscript real_mixed_fit12.R
 ```
 
-Run
+Replicate second-stage cross-validation
 
-```r
-source('code/pseudo_full_fit.R')
+```console
+sh real_mixed_cv2.sh
+Rscript real_mixed_cv2_merge.R
 ```
 
-to generate intermediate result `pseudo_full_fit.RData` under `code` folder. Run
+Fit the second-stage model with the selected bandwidth
 
-```r
-source('code/figureS1.R')
+```console
+Rscript real_mixed_fit2.R
 ```
 
-to generate Figure S1. 
+This will generate the intermediate result under `code` folder. Run
 
-### 5. Simulation for the Locally Weighted Pseudo Likelihood Approach (Section D in the Online Supplementary Material)
-
-Run
-
-```r
-source('code/likelihood_simu.R')
+```console
+Rscript real_mixed_plot.R
 ```
 
-to generate intermediate result `likelihood_simu_result.RData` under `code` folder. Run
-
-```r
-source('code/figureS2.R')
-```
-
-to generate Figure S2.
+to generate Figure 4. 
