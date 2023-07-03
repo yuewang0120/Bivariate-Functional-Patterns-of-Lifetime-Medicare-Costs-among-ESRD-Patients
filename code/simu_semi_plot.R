@@ -37,9 +37,8 @@ beta2 <- function(t, s) {
     0.5 * (sin(t * 0.4) - cos(s / 2))
 }
 true <- c(beta1(grid[,1], grid[,2]), beta2(grid[,1], grid[,2]))
-png('simu_semi_fit_h=1.12_est.png', width = 860, height = 500)
+png('figure1.png', width = 860, height = 500)
 data.frame(t = rep(grid[,1], 2), s = rep(grid[,2], 2), true = true, est = tvc1 %>% rowMeans(), 
-        #    upper = tvc1 %>% rowQuantiles(probs = 0.975), lower = tvc1 %>% rowQuantiles(probs = 0.025),
            upper2 = tvc1 %>% rowMeans() + 1.96 * sqrt(var_tvc1) %>% rowMeans(), lower2 = tvc1 %>% rowMeans() - 1.96 * sqrt(var_tvc1) %>% rowMeans(), 
            upper3 = tvc1 %>% rowMeans() + 1.96 * rowSds(tvc1), lower3 = tvc1 %>% rowMeans() - 1.96 * rowSds(tvc1), 
            beta = rep(paste0('beta[', 1:2, ']'), each = nrow(grid)), death = rep(rowSums(grid), 2)) %>%
@@ -53,14 +52,4 @@ data.frame(t = rep(grid[,1], 2), s = rep(grid[,2], 2), true = true, est = tvc1 %
     geom_line(aes(y = lower2), linetype = 'dotdash', color = 'green') + 
     facet_grid(beta ~ factor(paste0("'T=", period, "'"), levels=paste0("'T=", c(5, 10, 15), "'")), scale = 'free', labeller = label_parsed) +
     theme(text = element_text(size = 20), aspect.ratio = 1) + ylab('')
-dev.off()
-png('simu_semi_fit_h=1.12_cover.png', width = 860, height = 500)
-data.frame(t = rep(grid[,1], 2), s = rep(grid[,2], 2), coverage = rowMeans(tvc1 + 1.96 * sqrt(var_tvc1) > true & tvc1 - 1.96 * sqrt(var_tvc1) < true),
-           beta = rep(paste0('beta[', 1:2, ']'), each = nrow(grid)), death = rep(rowSums(grid), 2)) %>%
-    mutate(period = t + s) %>%
-    ggplot(aes(x = t)) + 
-    geom_line(aes(y = 0.95), linetype = 'dotted') +
-    geom_line(aes(y = coverage)) + 
-    facet_grid(beta ~ factor(paste0("'T=", period, "'"), levels=paste0("'T=", c(5, 10, 15), "'")), scale = 'free_x', labeller = label_parsed) +
-    theme(text = element_text(size = 20), aspect.ratio = 1) + ylab('') + ylim(c(0,1))
 dev.off()

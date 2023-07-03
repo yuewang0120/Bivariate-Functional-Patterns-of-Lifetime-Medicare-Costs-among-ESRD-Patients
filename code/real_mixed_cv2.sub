@@ -4,13 +4,13 @@
 # lines that start with "#SBATCH" are special directives for Slurm
 # other lines that start with "#" are comments
 
-#SBATCH --job-name=simu_mixed_cv2  ## job name
+#SBATCH --job-name=real_mixed_cv2  ## job name
 #SBATCH -p standard              ## use free partition
 #SBATCH -A YOUR_ACCOUNT_NAME     ## this should be changed 
 #SBATCH --nodes=1                ## use 1 node, don't ask for multiple
 #SBATCH --ntasks=1               ## ask for 1 CPU
 #SBATCH --cpus-per-task=20
-#SBATCH --time=10:00:00
+#SBATCH --time=1:00:00
 #SBATCH --error=%x_id=%A.err     ## Slurm error  file, %x - job name, %A job id
 #SBATCH --out=%x_id=%A.out       ## Slurm output file, %x - job name, %A job id
 #SBATCH --mail-type=none
@@ -23,4 +23,4 @@ echo "Running job on host $hn"
 # load R module
 module load R
 
-Rscript simu_mixed_cv2.R $1 $2 $3
+Rscript real_mixed_cv2.R $1 $2 $3

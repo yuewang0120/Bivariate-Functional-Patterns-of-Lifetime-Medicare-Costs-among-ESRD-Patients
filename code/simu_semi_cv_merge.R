@@ -7,6 +7,5 @@ for (seed in 1:10) {
             result <- rbind(result, temp)
         }
     }
-    # result %>% group_by(h) %>% summarize(sse = sum(sse), nobs = sum(nobs)) %>% print()
     result %>% group_by(h) %>% summarize(sse = sum(sse), nobs = sum(nobs)) %>% with(h[which.min(sse)]) %>% print()
 }

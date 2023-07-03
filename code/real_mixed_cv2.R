@@ -1,31 +1,67 @@
-# setwd('..')
 source("functions2.R")
-# d <- attach.big.matrix("cohort23_10p.desc")
-load('cohort3_10p.RData')
-# group3 <- !is.na(d[,12]) & d[,12]>=0
-group3 <- data$time >= as.numeric(data$TX1DATE)
-# uniq_id <- unique(d[group3,13])
-uniq_id <- unique(data$USRDS_ID[group3])
+data <- readRDS('../data/usrds2')
+group3 <- with(data, !is.na(time3) & time3 >= 0)
+uniq_id <- unique(data$pseudo_id[group3])
 set.seed(123)
 id_by_folds <- split(sample(uniq_id), rep(1:5, length.out = length(uniq_id)))
 args <- commandArgs(trailingOnly = TRUE)
 h <- as.numeric(args[1])
 fold <- as.numeric(args[2])
-# train <- d[group3,13] %in% unlist(id_by_folds[-fold])
-train <- data$USRDS_ID[group3] %in% unlist(id_by_folds[-fold])
-# test <- d[group3,13] %in% id_by_folds[[fold]]
-test <- data$USRDS_ID[group3] %in% id_by_folds[[fold]]
-# load('y_minus_xb_h=58.RData')
-pres <- c()
-for (i in 1:5) {
-    temp <- readRDS(paste0('real_mixed_fit12/all_pres_h=300_part=', i))
-    pres <- c(pres, temp)
+type <- as.numeric(args[3])
+train <- data$pseudo_id[group3] %in% unlist(id_by_folds[-fold])
+test <- data$pseudo_id[group3] %in% id_by_folds[[fold]]
+if (type == 1) {
+    pres <- c()
+    for (i in 1:5) {
+        temp <- readRDS(paste0('real_mixed_fit12_ip_part=', i))
+        pres <- c(pres, temp)
+    }
+    fit <- with(data[group3,], kfit.pa(matrix(1, sum(train)), pres[train], time3[train], time2[train], time3[test], time2[test], h, 19))
+    res <- pres[test] - c(fit)
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv2_ip_h=', h, '_fold=', fold))
+} else if (type == 2) {
+    pres <- c()
+    for (i in 1:5) {
+        temp <- readRDS(paste0('real_mixed_fit12_op_part=', i))
+        pres <- c(pres, temp)
+    }
+    fit <- with(data[group3,], kfit.pa(matrix(1, sum(train)), pres[train], time3[train], time2[train], time3[test], time2[test], h, 19))
+    res <- pres[test] - c(fit)
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv2_op_h=', h, '_fold=', fold))
+} else if (type == 3) {
+    pres <- c()
+    for (i in 1:5) {
+        temp <- readRDS(paste0('real_mixed_fit12_sn_part=', i))
+        pres <- c(pres, temp)
+    }
+    fit <- with(data[group3,], kfit.pa(matrix(1, sum(train)), pres[train], time3[train], time2[train], time3[test], time2[test], h, 19))
+    res <- pres[test] - c(fit)
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv2_sn_h=', h, '_fold=', fold))
+} else if (type == 4) {
+    pres <- c()
+    for (i in 1:5) {
+        temp <- readRDS(paste0('real_mixed_fit12_hh_part=', i))
+        pres <- c(pres, temp)
+    }
+    fit <- with(data[group3,], kfit.pa(matrix(1, sum(train)), pres[train], time3[train], time2[train], time3[test], time2[test], h, 19))
+    res <- pres[test] - c(fit)
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv2_hh_h=', h, '_fold=', fold))
+} else if (type == 5) {
+    pres <- c()
+    for (i in 1:5) {
+        temp <- readRDS(paste0('real_mixed_fit12_hs_part=', i))
+        pres <- c(pres, temp)
+    }
+    fit <- with(data[group3,], kfit.pa(matrix(1, sum(train)), pres[train], time3[train], time2[train], time3[test], time2[test], h, 19))
+    res <- pres[test] - c(fit)
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv2_hs_h=', h, '_fold=', fold))
+} else {
+    pres <- c()
+    for (i in 1:5) {
+        temp <- readRDS(paste0('real_mixed_fit12_all_part=', i))
+        pres <- c(pres, temp)
+    }
+    fit <- with(data[group3,], kfit.pa(matrix(1, sum(train)), pres[train], time3[train], time2[train], time3[test], time2[test], h, 19))
+    res <- pres[test] - c(fit)
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv2_all_h=', h, '_fold=', fold))
 }
-# fit <- kfitp(matrix(1, sum(train)), y_minus_xb[train], d[group3, 12][train], d[group3, 11][train], d[group3, 12][test], d[group3, 11][test], h, 19)
-# fit <- with(data[group3,], kfitp(cbind(1, DTYPE == 'C')[train,], pres[train], (time - as.numeric(TX1DATE))[train], (as.numeric(DIED) - time)[train], (time - as.numeric(TX1DATE))[test], (as.numeric(DIED) - time)[test], h, 19))
-fit <- with(data[group3,], kfit.p(matrix(1, sum(train)), pres[train], (time - as.numeric(TX1DATE))[train], (as.numeric(DIED) - time)[train], (time - as.numeric(TX1DATE))[test], (as.numeric(DIED) - time)[test], h, 19))
-# save(fit, file = paste0('real_mixed_cv2_h=', args[1], '_fold=', args[2], '.RData'))
-# res <- d[group3, 9][test] - c(fit)
-# res <- pres[test] - rowSums(cbind(1, data$DTYPE[group3][test] == 'C') * fit)
-res <- pres[test] - c(fit)
-data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv2/all_h=300_h2=', args[1], '_fold=', args[2]))

@@ -16,18 +16,13 @@
 
 
 # Launch the job and then remove the temporarily created qsub file.
-for i in {1..10}
+for i in 10 20 30 40 60 80 100 150 200
 do
-    for j in {1..10}
+    for j in {1..5}
     do
-        for k in {1..5}
+        for k in {1..6}
         do
-            # echo "$i+$j"
-            sbatch simu_mixed_cv2.sub $i $j $k
+            sbatch real_mixed_cv2.sub $i $j $k
         done
     done
 done
-# for i in {21311735..21311784}
-# do
-#     scancel $i
-# done

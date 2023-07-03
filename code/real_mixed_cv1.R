@@ -1,30 +1,35 @@
-# setwd('..')
 source("functions2.R")
-# cl <- makeCluster(20)
-# RACE == 2, RACE > 2, SEX == 2, INC_AGE, hypertension, other_comorbid, bmi >= 25, bmi >= 30, log(claim / 100 + 1), time - as.numeric(FIRST_SE), as.numeric(DIED) - time, time - as.numeric(TX1DATE), USRDS_ID
-# load("cohort23_10p.RData")
-# d <- attach.big.matrix("cohort23_10p.desc")
-# group2 <- is.na(d[,12])
-# uniq_id <- unique(d[group2,13])
-load('../data/usrds2.RData')
-# data2 <- data
-# load('cohort3_10p.RData')
-# data <- data2 %>% bind_rows(data)
-uniq_id <- unique(data$USRDS_ID)
+data <- readRDS('../data/usrds2')
+uniq_id <- unique(data$pseudo_id)
 set.seed(123)
 id_by_folds <- split(sample(uniq_id), rep(1:5, length.out = length(uniq_id)))
 args <- commandArgs(trailingOnly = TRUE)
 h <- as.numeric(args[1])
 fold <- as.numeric(args[2])
-# train <- d[,13] %in% unlist(id_by_folds[-fold])
-train <- data$USRDS_ID %in% unlist(id_by_folds[-fold])
-# test <- d[,13] %in% id_by_folds[[fold]]
-test <- data$USRDS_ID %in% id_by_folds[[fold]]
-# cl <- makeCluster(19)
-# fit <- kfitp(cbind(1, d[train, 1:8]), d[train, 9], d[train, 10], d[train, 11], d[test, 10], d[test, 11], h, 19)
-fit <- with(data, kfit.p(cbind(1, RACE == 2, RACE > 2, SEX == 2, INC_AGE, hypertension, other_comorbid, bmi >= 25, bmi >= 30)[train,], log(ip+op+sn+hh+hs/100+1)[train], time[train] - as.numeric(FIRST_SE[train]), as.numeric(DIED[train]) - time[train], time[test] - as.numeric(FIRST_SE[test]), as.numeric(DIED[test]) - time[test], h, 19))
-# stopCluster(cl)
-# save(fit, file = paste0('real_mixed_cv1_h=', args[1], '_fold=', args[2], '.RData'))
-# res <- d[test, 9] - rowSums(cbind(1, d[test, 1:8]) * fit)
-res <- with(data[test, ], log(ip+op+sn+hh+hs/100+1) - rowSums(cbind(1, RACE == 2, RACE > 2, SEX == 2, INC_AGE, hypertension, other_comorbid, bmi >= 25, bmi >= 30) * fit))
-data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv1/all_h=', args[1], '_fold=', args[2]))
+type <- as.numeric(args[3])
+test <- data$pseudo_id %in% id_by_folds[[fold]]
+if (type == 1) {
+    fit <- with(data, kfit.pa(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30)[!test,], log(ip / 100 + 1)[!test], time1[!test], time2[!test], time1[test], time2[test], h, 19))
+    res <- with(data[test, ], log(ip / 100 + 1) - rowSums(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30) * fit))
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv1_ip_h=', h, '_fold=', fold))
+} else if (type == 2) {
+    fit <- with(data, kfit.pa(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30)[!test,], log(op / 100 + 1)[!test], time1[!test], time2[!test], time1[test], time2[test], h, 19))
+    res <- with(data[test, ], log(op / 100 + 1) - rowSums(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30) * fit))
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv1_op_h=', h, '_fold=', fold))
+} else if (type == 3) {
+    fit <- with(data, kfit.pa(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30)[!test,], log(sn / 100 + 1)[!test], time1[!test], time2[!test], time1[test], time2[test], h, 19))
+    res <- with(data[test, ], log(sn / 100 + 1) - rowSums(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30) * fit))
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv1_sn_h=', h, '_fold=', fold))
+} else if (type == 4) {
+    fit <- with(data, kfit.pa(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30)[!test,], log(hh / 100 + 1)[!test], time1[!test], time2[!test], time1[test], time2[test], h, 19))
+    res <- with(data[test, ], log(hh / 100 + 1) - rowSums(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30) * fit))
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv1_hh_h=', h, '_fold=', fold))
+} else if (type == 5) {
+    fit <- with(data, kfit.pa(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30)[!test,], log(hs / 100 + 1)[!test], time1[!test], time2[!test], time1[test], time2[test], h, 19))
+    res <- with(data[test, ], log(hs / 100 + 1) - rowSums(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30) * fit))
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv1_hs_h=', h, '_fold=', fold))
+} else {
+    fit <- with(data, kfit.pa(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30)[!test,], log((ip + op + sn + hh + hs) / 100 + 1)[!test], time1[!test], time2[!test], time1[test], time2[test], h, 19))
+    res <- with(data[test, ], log((ip + op + sn + hh + hs) / 100 + 1) - rowSums(cbind(1, race == 2, race > 2, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25, bmi >= 30) * fit))
+    data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('real_mixed_cv1_all_h=', h, '_fold=', fold))
+}

@@ -42,4 +42,4 @@ grid <- rbind(cbind(seq(0, 5, 0.25), seq(5, 0, -0.25)), cbind(seq(0, 10, 0.5), s
 fit <- with(data, kfit.p(matrix(1, nrow(data)), pres, tau - tspl, end - tau, grid[,1], grid[,2], 1.1, 19))
 res <- with(data, kres.pa(matrix(1, nrow(data)), matrix(pres), tau - tspl, end - tau, 1:nrow(data), 1.1, 19))
 var <- with(data, sandwich(matrix(1, nrow(data)), res, id, tau - tspl, end - tau, grid[,1], grid[,2], 1.1))
-list(est = fit, var = var) %>% saveRDS(paste0('simu_mixed_fit2_h2=1.1_seed=', seed))
+list(est = fit, var = var) %>% saveRDS(paste0('simu_mixed_fit2_h=1.1_seed=', seed))

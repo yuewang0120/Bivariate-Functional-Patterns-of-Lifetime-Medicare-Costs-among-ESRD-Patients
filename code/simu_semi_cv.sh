@@ -22,12 +22,7 @@ do
     do
         for k in {1..5}
         do
-            # echo "$i+$j"
             sbatch simu_semi_cv.sub $i $j $k
         done
     done
 done
-# for i in {21311735..21311784}
-# do
-#     scancel $i
-# done
