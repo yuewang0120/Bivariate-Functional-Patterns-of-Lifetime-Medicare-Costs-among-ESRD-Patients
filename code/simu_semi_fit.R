@@ -40,7 +40,8 @@ res_fc1 <- ytilde - c(ztilde %*% fc1)
 var_fc1 <- with(data, sandwich(ztilde, res_fc1, id, tau, end - tau, 0, 0, 1e10))
 
 ## OLS varying coef estimate
-grid <- rbind(cbind(seq(0, 5, 0.25), seq(5, 0, -0.25)), cbind(seq(0, 10, 0.5), seq(10, 0, -0.5)), cbind(seq(0, 15, 0.75), seq(15, 0, -0.75)))
+# grid <- rbind(cbind(seq(0, 5, 0.25), seq(5, 0, -0.25)), cbind(seq(0, 10, 0.5), seq(10, 0, -0.5)), cbind(seq(0, 15, 0.75), seq(15, 0, -0.75)))
+grid <- expand.grid(seq(0, 20, 0.25), seq(0, 20, 0.25)) %>% filter(Var1 + Var2 <= 20)
 tvc1 <- with(data, kfit.p(cbind(1, x2), y - c(cbind(z1, z2) %*% fc1), tau, end - tau, grid[,1], grid[,2], 1.12, 19))
 var_tvc1 <- with(data, sandwich(cbind(1, x2), res_fc1, id, tau, end - tau, grid[,1], grid[,2], 1.12))
 
@@ -56,4 +57,5 @@ temp <- lapply(unique(data$id), function(x) {
 V <- Reduce('+', temp)
 Dinv <- solve(crossprod(ztilde, ztilde / sigma2))
 var_fc2 <- Dinv %*% V %*% Dinv
-list(fc1 = fc1, var_fc1 = var_fc1, tvc1 = tvc1, var_tvc1 = var_tvc1, fc2 = fc2, var_fc2 = var_fc2) %>% saveRDS(paste0('simu_semi_fit_seed=', seed, '_h=1.12'))
+dir.create('simu_semi_fit')
+list(fc1 = fc1, var_fc1 = var_fc1, tvc1 = tvc1, var_tvc1 = var_tvc1, fc2 = fc2, var_fc2 = var_fc2) %>% saveRDS(paste0('simu_semi_fit/seed=', seed, '_h=1.12'))

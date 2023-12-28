@@ -40,4 +40,5 @@ data <- sim_n_persons(1000, 20) %>% filter(died)
 id1 <- is.na(data$tspl)
 id2 <- !is.na(data$tspl) & data$tau >= data$tspl
 fit <- with(data, kfit.pa(cbind(1, x2, x3)[id1,], y[id1], tau[id1], (end - tau)[id1], tau[id2], (end - tau)[id2], 2.1, 19))
-with(data[id2,], y - rowSums(cbind(1, x2, x3) * fit)) %>% saveRDS(paste0('simu_mixed_fit12_h1=2.1_seed=', seed))
+dir.create('simu_mixed_fit12')
+with(data[id2,], y - rowSums(cbind(1, x2, x3) * fit)) %>% saveRDS(paste0('simu_mixed_fit12/h1=2.1_seed=', seed))

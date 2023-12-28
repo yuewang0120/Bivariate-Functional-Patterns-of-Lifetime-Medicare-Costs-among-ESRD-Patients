@@ -11,22 +11,23 @@ rowid <- sort(rep(1:10, length.out = sum(group3)))
 args <- commandArgs(trailingOnly = TRUE)
 part <- as.numeric(args[1])
 type <- as.numeric(args[2])
+dir.create('real_mixed_fit12')
 if (type == 1) {
     fit <- with(data, kfit.pa(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30)[group2,], log(ip / 100 + 1)[group2], time1[group2], time2[group2], time1[group3][rowid == part], time2[group3][rowid == part], h1[type], 19))
-    with(data[group3,][rowid == part,], log(ip / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12_ip_part=', part))
+    with(data[group3,][rowid == part,], log(ip / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12/ip_part=', part))
 } else if (type == 2) {
     fit <- with(data, kfit.pa(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30)[group2,], log(op / 100 + 1)[group2], time1[group2], time2[group2], time1[group3][rowid == part], time2[group3][rowid == part], h1[type], 19))
-    with(data[group3,][rowid == part,], log(op / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12_op_part=', part))
+    with(data[group3,][rowid == part,], log(op / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12/op_part=', part))
 } else if (type == 3) {
     fit <- with(data, kfit.pa(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30)[group2,], log(sn / 100 + 1)[group2], time1[group2], time2[group2], time1[group3][rowid == part], time2[group3][rowid == part], h1[type], 19))
-    with(data[group3,][rowid == part,], log(sn / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12_sn_part=', part))
+    with(data[group3,][rowid == part,], log(sn / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12/sn_part=', part))
 } else if (type == 4) {
     fit <- with(data, kfit.pa(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30)[group2,], log(hh / 100 + 1)[group2], time1[group2], time2[group2], time1[group3][rowid == part], time2[group3][rowid == part], h1[type], 19))
-    with(data[group3,][rowid == part,], log(hh / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12_hh_part=', part))
+    with(data[group3,][rowid == part,], log(hh / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12/hh_part=', part))
 } else if (type == 5) {
     fit <- with(data, kfit.pa(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30)[group2,], log(hs / 100 + 1)[group2], time1[group2], time2[group2], time1[group3][rowid == part], time2[group3][rowid == part], h1[type], 19))
-    with(data[group3,][rowid == part,], log(hs / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12_hs_part=', part))
+    with(data[group3,][rowid == part,], log(hs / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12/hs_part=', part))
 } else {
     fit <- with(data, kfit.pa(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30)[group2,], log((ip + op + sn + hh + hs) / 100 + 1)[group2], time1[group2], time2[group2], time1[group3][rowid == part], time2[group3][rowid == part], h1[type], 19))
-    with(data[group3,][rowid == part,], log((ip + op + sn + hh + hs) / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12_all_part=', part))
+    with(data[group3,][rowid == part,], log((ip + op + sn + hh + hs) / 100 + 1) - rowSums(cbind(1, race == 2, race == 3, sex == 2, age - 65, hypertension, other_comorbid, bmi >= 25 & bmi < 30, bmi >= 30) * fit)) %>% saveRDS(paste0('real_mixed_fit12/all_part=', part))
 }
