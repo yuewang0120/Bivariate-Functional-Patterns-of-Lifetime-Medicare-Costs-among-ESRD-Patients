@@ -45,4 +45,5 @@ id_by_folds <- split(sample(uniq_id), rep(1:5, length.out = length(uniq_id)))
 test <- data$id %in% id_by_folds[[fold]]
 fit <- with(data, kfit.p(cbind(1, x2, x3)[!test,], y[!test], tau[!test], (end - tau)[!test], tau[test], (end - tau)[test], h, 19))
 res <- with(data[test, ], y - rowSums(cbind(1, x2, x3) * fit))
-data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('simu_mixed_cv1_seed=', seed, '_h=', h, '_fold=', fold))
+dir.create('simu_mixed_cv1')
+data.frame(h = h, fold = fold, sse = sum(res^2, na.rm = T), nobs = sum(!is.na(res))) %>% saveRDS(paste0('simu_mixed_cv1/seed=', seed, '_h=', h, '_fold=', fold))

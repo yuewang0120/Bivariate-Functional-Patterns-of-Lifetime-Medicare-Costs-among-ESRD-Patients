@@ -20,6 +20,6 @@ for j in 20 30 40 50 60
 do
     for k in {1..5}
     do
-        sbatch real_semi_cv.sub $j $k
+        sbatch --output=output/%j.log --error=error/%j.log real_semi_cv.sub $j $k
     done
 done

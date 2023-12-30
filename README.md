@@ -45,7 +45,7 @@ This will generate intermediate results, stored under `code` folder. Once this i
 Rscript simu_semi_plot.R
 ```
 
-to generate Figure 1 under `code` folder.
+to generate Figure 1 (both 2D and 3D versions) under `code` folder and display Table 2.
 
 ### 2. Simulation for the Mixed-Time Varying-Coefficient Mode (Model 4.2)
 
@@ -59,7 +59,7 @@ Rscript simu_mixed_cv1_merge.R
 Then run first-stage simulation with 500 replications using the selected bandwidth $h_1=2.1$, this will create the response for the second stage
 
 ```console
-sh simu_semi_fit12.sh
+sh simu_mixed_fit12.sh
 ```
 
 After that, we can obtain the second-stage bandwidths on 10 simulated datasets by running
@@ -72,7 +72,7 @@ Rscript simu_mixed_cv2_merge.R
 Run second-stage simulation with 500 replications using the undersmoothed bandwidth $h_2=1.1$
 
 ```console
-sh simu_semi_fit2.sh
+sh simu_mixed_fit2.sh
 ```
 
 This will generate intermediate results, stored under `code` folder. Once this is done, run
@@ -81,7 +81,7 @@ This will generate intermediate results, stored under `code` folder. Once this i
 Rscript simu_mixed_plot.R
 ```
 
-to generate Figure 2 under the same folder.
+to generate Figure 2 (2D and 3D) under the same folder.
 
 ### 3. ESRD Data Analysis of Cost Difference Associated with Waitlisting (Section 5.1)
 
@@ -95,7 +95,7 @@ Rscript real_semi_cv_merge.R
 Fit the model with the selected bandwidth
 
 ```console
-Rscript real_semi_fit.R
+sh real_semi_fit.sh
 ```
 
 This will generate the intermediate result under `code` folder. Run
@@ -104,7 +104,7 @@ This will generate the intermediate result under `code` folder. Run
 Rscript real_semi_plot.R
 ```
 
-to generate Figure 3. 
+to generate Figure 3 (2D and 3D) and display Table 3 and 4. 
 
 ### 4. ESRD Data Analysis of Cost Difference Associated with Transplant (Section 5.2)
 
@@ -118,7 +118,7 @@ Rscript real_mixed_cv1_merge.R
 Create the response for the second stage
 
 ```console
-Rscript real_mixed_fit12.R
+sh real_mixed_fit12.sh
 ```
 
 Replicate second-stage cross-validation
@@ -131,7 +131,7 @@ Rscript real_mixed_cv2_merge.R
 Fit the second-stage model with the selected bandwidth
 
 ```console
-Rscript real_mixed_fit2.R
+sh real_mixed_fit2.sh
 ```
 
 This will generate the intermediate result under `code` folder. Run
@@ -140,4 +140,4 @@ This will generate the intermediate result under `code` folder. Run
 Rscript real_mixed_plot.R
 ```
 
-to generate Figure 4. 
+to generate Figure 4 and Figure 5 (both in 2D and 3D). 

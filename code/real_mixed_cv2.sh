@@ -22,7 +22,7 @@ do
     do
         for k in {1..6}
         do
-            sbatch real_mixed_cv2.sub $i $j $k
+            sbatch --output=output/%j.log --error=error/%j.log real_mixed_cv2.sub $i $j $k
         done
     done
 done

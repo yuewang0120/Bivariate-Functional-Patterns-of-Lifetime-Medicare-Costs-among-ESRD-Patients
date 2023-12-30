@@ -1,10 +1,11 @@
-library(dplyr)
+suppressMessages(library(dplyr))
 result <- c()
-files <- list.files()
+files <- list.files('real_semi_cv', full.names = T)
 for (file in files) {
-    if (startsWith(file, 'real_semi_cv_h=')) {
-        temp <- readRDS(file)
-        result <- rbind(result, temp)
-    }
+    temp <- readRDS(file)
+    result <- rbind(result, temp)
 }
-result %>% group_by(h) %>% summarize(sse = sum(sse), nobs = sum(nobs)) %>% with(h[which.min(sse)]) %>% print()
+print('The undersmoothed bandwidth is:')
+h <- result %>% group_by(h) %>% summarize(sse = sum(sse), nobs = sum(nobs)) %>% with(h[which.min(sse)])
+print(h / 9880 ^ 0.05)
+print('Note this bandwidth is obtained from the pseudo dataset and is not the same as what is used in the paper.')

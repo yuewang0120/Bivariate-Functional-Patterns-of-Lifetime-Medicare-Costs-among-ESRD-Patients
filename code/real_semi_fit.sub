@@ -6,7 +6,7 @@
 
 #SBATCH --job-name=real_semi_fit  ## job name
 #SBATCH -p standard              ## use free partition
-#SBATCH -A nanb_lab     ## this should be changed 
+#SBATCH -A YOUR_ACCOUNT_NAME     ## this should be changed 
 #SBATCH --nodes=1                ## use 1 node, don't ask for multiple
 #SBATCH --ntasks=1               ## ask for 1 CPU
 #SBATCH --cpus-per-task=20
@@ -14,7 +14,7 @@
 #SBATCH --error=%x_id=%A.err     ## Slurm error  file, %x - job name, %A job id
 #SBATCH --out=%x_id=%A.out       ## Slurm output file, %x - job name, %A job id
 #SBATCH --mail-type=none
-#SBATCH --mail-user=ywang47@uci.edu ## this should be changed 
+#SBATCH --mail-user=YOUR_EMAIL_ADDRESS ## this should be changed 
 
 # Run command hostname and assign output to a variable
 hn=`hostname`

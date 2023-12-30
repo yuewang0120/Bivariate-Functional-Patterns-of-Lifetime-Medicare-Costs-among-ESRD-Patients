@@ -1,6 +1,6 @@
-library(ggplot2)
+suppressMessages({library(ggplot2)
 library(dplyr)
-library(plotly)
+library(plotly)})
 grid <- expand.grid(seq(0, 3000, 100), seq(0, 3000, 100)) %>% filter(Var1 + Var2 < 3000)
 teval <- grid[,1]
 seval <- grid[,2]
@@ -39,8 +39,9 @@ coef <- c(coef, temp$coef)
 var <- c(var, temp$var)
 png('figure5.png', height=1000, width=860)
 temp <- c('IP', 'OP', 'SN', 'HH', 'HS')
-data.frame(x = rep(teval, 5), coef = coef, upper = coef + 1.96*sqrt(var), lower = coef - 1.96*sqrt(var), 
+data.frame(x = rep(teval, 5), y = rep(seval, 5), coef = coef, upper = coef + 1.96*sqrt(var), lower = coef - 1.96*sqrt(var), 
            death = rep(teval + seval, 5), type = rep(factor(temp, levels = temp), each = length(teval))) %>%
+    filter((x + y) %in% c(800, 1600, 2200)) %>%
     ggplot(aes(x = x)) + 
     geom_line(aes(y = coef)) + 
     geom_line(aes(y = upper), linetype='dashed', color = 'red') + 
@@ -195,11 +196,21 @@ dev.off()
 
 
 # Wireframe
+temp <- readRDS('real_mixed_fit2/all')
+coef <- temp$coef
+var <- temp$var
+
 df <- data.frame(grid, coef, coef + 1.96 * sqrt(var), coef - 1.96 * sqrt(var))
 names(df) <- c('x', 'y', 'est', 'ci upper', 'ci lower')
 
 df1 <- split(df, df$y)
 df2 <- split(df, df$x)
+# for (i in 1:length(df1)) {
+#     if (any(diff(df1[[i]][['x']])!=100)) stop()
+# }
+# for (i in 1:length(df2)) {
+#     if (any(diff(df2[[i]][['y']])!=100)) stop()
+# }
 add_mesh <- function(p, legendname, legendgroup, color, columnname, showlegend) {
     for(i in seq_along(df1)){
         df_sp <- df1[[i]]
@@ -250,7 +261,8 @@ layout(title = "3D Plot of Figure 4",
 layout(annotations = list(
     list(x = 0.5 , y = 0.95, text = "gamma", showarrow = F, xref='paper', yref='paper'))
 ) %>%
-htmlwidgets::saveWidget("figure4_3d.html")
+htmlwidgets::saveWidget("figure4_3d.html") %>% suppressWarnings()
+
 
 df <- data.frame(grid)
 names(df) <- c('x', 'y')
@@ -342,5 +354,5 @@ layout(annotations = list(
     list(x = 0.166 , y = 0.475, text = "HH", showarrow = F, xref='paper', yref='paper'),
     list(x = 0.5 , y = 0.475, text = "HS", showarrow = F, xref='paper', yref='paper'))
 ) %>%
-htmlwidgets::saveWidget("figure5_3d.html")
+htmlwidgets::saveWidget("figure5_3d.html") %>% suppressWarnings()
 

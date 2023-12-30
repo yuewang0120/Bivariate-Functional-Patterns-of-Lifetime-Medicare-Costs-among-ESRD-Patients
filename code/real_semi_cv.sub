@@ -10,7 +10,7 @@
 #SBATCH --nodes=1                ## use 1 node, don't ask for multiple
 #SBATCH --ntasks=1               ## ask for 1 CPU
 #SBATCH --cpus-per-task=20
-#SBATCH --time=1:00:00
+#SBATCH --time=10:00:00
 #SBATCH --error=%x_id=%A.err     ## Slurm error  file, %x - job name, %A job id
 #SBATCH --out=%x_id=%A.out       ## Slurm output file, %x - job name, %A job id
 #SBATCH --mail-type=none

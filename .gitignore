@@ -1,0 +1,16 @@
+*.png
+*.html
+code/error/
+code/output/
+code/simu_semi_cv/
+code/simu_semi_fit/
+code/simu_mixed_cv1/
+code/simu_mixed_fit12/
+code/simu_mixed_cv2/
+code/simu_mixed_fit2/
+code/real_semi_cv/
+code/real_semi_fit
+code/real_mixed_cv1/
+code/real_mixed_fit12/
+code/real_mixed_cv2/
+code/real_mixed_fit2/

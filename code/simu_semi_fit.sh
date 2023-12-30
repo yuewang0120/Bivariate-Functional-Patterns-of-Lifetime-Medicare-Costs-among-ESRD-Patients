@@ -18,5 +18,5 @@
 # Launch the job and then remove the temporarily created qsub file.
 for i in {1..500}
 do
-    sbatch simu_semi_fit.sub $i
+    sbatch --output=output/%j.log --error=error/%j.log simu_semi_fit.sub $i
 done

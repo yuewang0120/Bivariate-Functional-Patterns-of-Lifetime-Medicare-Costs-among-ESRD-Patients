@@ -22,7 +22,7 @@ do
     do
         for k in {1..5}
         do
-            sbatch simu_semi_cv.sub $i $j $k
+            sbatch --output=output/%j.log --error=error/%j.log simu_semi_cv.sub $i $j $k
         done
     done
 done

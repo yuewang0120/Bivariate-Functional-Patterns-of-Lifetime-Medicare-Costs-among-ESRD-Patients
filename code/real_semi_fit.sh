@@ -16,4 +16,4 @@
 
 
 # Launch the job and then remove the temporarily created qsub file.
-sbatch real_semi_fit.sub
+sbatch --output=output/%j.log --error=error/%j.log real_semi_fit.sub

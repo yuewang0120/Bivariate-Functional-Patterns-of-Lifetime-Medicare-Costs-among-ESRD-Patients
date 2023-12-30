@@ -1,8 +1,9 @@
+suppressMessages({
 library(dplyr)
 library(matrixStats)
 library(ggplot2)
-library(rgl)
-library(plotly)
+# library(rgl)
+library(plotly)})
 fc1 <- matrix(NA, 2, 500)
 var_fc1 <- matrix(NA, 2, 500)
 fc2 <- matrix(NA, 2, 500)
@@ -12,7 +13,7 @@ tvc1 <- matrix(NA, nrow(grid) * 2, 500)
 var_tvc1 <- matrix(NA, nrow(grid) * 2, 500)
 for (i in 1:500) {
     # temp <- readRDS(paste0('../../simu_semi_fit/design=2_n=1000_seed=', i, '_h=1.12'))
-    temp <- readRDS(paste0('simu_semi_fit_seed=', i, '_h=1.12'))
+    temp <- readRDS(paste0('simu_semi_fit/seed=', i, '_h=1.12'))
     fc1[,i] <- temp$fc1
     var_fc1[,i] <- temp$var_fc1[c(1,3)]
     tvc1[,i] <- temp$tvc1
@@ -21,16 +22,15 @@ for (i in 1:500) {
     var_fc2[,i] <- temp$var_fc2[c(1,4)]
 }
 ## fixed coef
-print('MSE of alpha hat with weight I:')
-rowMeans((fc1 - 1:2)^2)
-print('MSE of alpha hat with weight D:')
-rowMeans((fc2 - 1:2)^2)
-print('Ratio of the two MSEs:')
-rowMeans((fc2 - 1:2)^2) / rowMeans((fc1 - 1:2)^2)
-print('Coverage of alpha hat with weight I:')
-rowMeans(fc1 + 1.96 * sqrt(var_fc1) > 1:2 & fc1 - 1.96 * sqrt(var_fc1) < 1:2)
-print('Coverage of alpha hat with weight D:')
-rowMeans(fc2 + 1.96 * sqrt(var_fc2) > 1:2 & fc2 - 1.96 * sqrt(var_fc2) < 1:2)
+print('Table 2')
+temp <- matrix(NA, 2, 4)
+rownames(temp) <- c('MSE', 'Coverage')
+colnames(temp) <- c('Alpha_1I', 'Alpha_2I', 'Alpha_1D', 'Alpha_2D')
+temp[1,1:2] <- rowMeans((fc1 - 1:2)^2)
+temp[1,3:4] <- rowMeans((fc2 - 1:2)^2)
+temp[2,1:2] <- rowMeans(fc1 + 1.96 * sqrt(var_fc1) > 1:2 & fc1 - 1.96 * sqrt(var_fc1) < 1:2)
+temp[2,3:4] <- rowMeans(fc2 + 1.96 * sqrt(var_fc2) > 1:2 & fc2 - 1.96 * sqrt(var_fc2) < 1:2)
+print(temp)
 
 ## varying coef
 beta1 <- function(t, s) {
@@ -289,7 +289,7 @@ layout(annotations = list(
     list(x = 0.2 , y = 0.95, text = "beta1", showarrow = F, xref='paper', yref='paper'),
     list(x = 0.8 , y = 0.95, text = "beta2", showarrow = F, xref='paper', yref='paper'))
 ) %>%
-htmlwidgets::saveWidget("figure1_3d.html")
+htmlwidgets::saveWidget("figure1_3d.html") %>% suppressWarnings()
 
 
 

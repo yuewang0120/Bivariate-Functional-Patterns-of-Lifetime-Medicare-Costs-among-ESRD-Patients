@@ -20,6 +20,6 @@ for i in {1..10}
 do
     for j in {1..6}
     do
-        sbatch real_mixed_fit12.sub $i $j
+        sbatch --output=output/%j.log --error=error/%j.log real_mixed_fit12.sub $i $j
     done
 done

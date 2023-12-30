@@ -1,15 +1,19 @@
-load('real_semi_fit')
-print('Fixed coefficients, confidence intervals and P-values:')
-library(dplyr)
+suppressMessages({library(dplyr)
 library(plotly)
-cbind(fc2, fc2 - 1.96 * sqrt(diag(var_fc2)), fc2 + 1.96 * sqrt(diag(var_fc2)), 2*pnorm(-abs(fc2), sd = sqrt(diag(var_fc2)))) %>% signif(4) %>% '*'(1)
+library(ggplot2)})
+load('real_semi_fit')
+print('Table 3')
+temp <- cbind(fc2, fc2 - 1.96 * sqrt(diag(var_fc2)), fc2 + 1.96 * sqrt(diag(var_fc2)), 2*pnorm(-abs(fc2), sd = sqrt(diag(var_fc2)))) %>% signif(4) %>% '*'(1)
+colnames(temp) <- c('Estimate', 'Lower CI', 'Upper CI', 'P-value')
+rownames(temp) <- c('Waitlisted', 'Time X Waitlisted', 'Race: black', 'Race: other', 'Sex: female', 'Age', 'Hypertension', 'Other comorbidities', '25 <= BMI < 30', 'BMI >= 30')
+print(temp)
+
 
 
 png('figure3.png', height=500, width=860)
 grid <- expand.grid(seq(0, 3000, 50), seq(0, 3000, 50)) %>% filter(Var1 + Var2 <= 3000)
 teval <- grid$Var1
 seval <- grid$Var2
-library(ggplot2)
 data.frame(x = rep(teval, 2), y = rep(seval, 2), est = c(tvc1), 
            upper = c(tvc1 + 1.96*sqrt(var_tvc1[, c(1,3)])),
            lower = c(tvc1 - 1.96*sqrt(var_tvc1[, c(1,3)])),
@@ -88,33 +92,35 @@ dev.off()
 
 # comparison test table
 # load('real_semi_fit_for_test')
+print('Table 4')
+temp <- matrix(NA, 3, 4)
 t1 <- 50
 s1 <- 450
 t2 <- 250
 s2 <- 250
 id1 <- with(grid, Var1 == t1 & Var2 == s1)
 id2 <- with(grid, Var1 == t2 & Var2 == s2)
-print('Delta beta, CI and P-value for T = 500:')
-print(c(tvc1[id2,2] - tvc1[id1,2] + sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]) * 1.96 * c(0,-1,1),
-pnorm((tvc1[id2,2] - tvc1[id1,2]) / sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]), lower.tail = F)))
+temp[1,] <- c(tvc1[id2,2] - tvc1[id1,2] + sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]) * 1.96 * c(0,-1,1),
+pnorm((tvc1[id2,2] - tvc1[id1,2]) / sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]), lower.tail = F))
 t1 <- 50
 s1 <- 1200
 t2 <- 250
 s2 <- 1000
 id1 <- with(grid, Var1 == t1 & Var2 == s1)
 id2 <- with(grid, Var1 == t2 & Var2 == s2)
-print('Delta beta, CI and P-value for T = 1250:')
-print(c(tvc1[id2,2] - tvc1[id1,2] + sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]) * 1.96 * c(0,-1,1),
-pnorm((tvc1[id2,2] - tvc1[id1,2]) / sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]), lower.tail = F)))
+temp[2,] <- c(tvc1[id2,2] - tvc1[id1,2] + sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]) * 1.96 * c(0,-1,1),
+pnorm((tvc1[id2,2] - tvc1[id1,2]) / sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]), lower.tail = F))
 t1 <- 50
 s1 <- 1950
 t2 <- 250
 s2 <- 1750
 id1 <- with(grid, Var1 == t1 & Var2 == s1)
 id2 <- with(grid, Var1 == t2 & Var2 == s2)
-print('Delta beta, CI and P-value for T = 2000:')
-print(c(tvc1[id2,2] - tvc1[id1,2] + sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]) * 1.96 * c(0,-1,1),
-pnorm((tvc1[id2,2] - tvc1[id1,2]) / sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]), lower.tail = F)))
+temp[3,] <- c(tvc1[id2,2] - tvc1[id1,2] + sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]) * 1.96 * c(0,-1,1),
+pnorm((tvc1[id2,2] - tvc1[id1,2]) / sqrt(var_tvc1[id1,3] + var_tvc1[id2,3]), lower.tail = F))
+colnames(temp) <- c('Estimated difference', 'Lower CI', 'Upper CI', 'P-value')
+rownames(temp) <- paste0('T=', c(500, 1250, 2000))
+print(temp)
 
 
 # find the quantiles of T
@@ -174,11 +180,11 @@ add_mesh <- function(p, legendname, legendgroup, color, columnname, showlegend) 
 }
 p1 <- add_mesh(plot_ly(scene = 'scene1'), 'Estimate', 'group1', 'black', 'beta1:est', TRUE)
 p1 <- add_mesh(p1, '95% Upper Confidence Band', 'group2', 'red', 'beta1:ci upper', TRUE)
-p1 <- add_mesh(p1, '95% Loewr Confidence Band', 'group3', 'red', 'beta1:ci lower', TRUE)
+p1 <- add_mesh(p1, '95% Lower Confidence Band', 'group3', 'red', 'beta1:ci lower', TRUE)
 
 p2 <- add_mesh(plot_ly(scene = 'scene2'), 'Estimate', 'group1', 'black', 'beta2:est', FALSE)
 p2 <- add_mesh(p2, '95% Upper Confidence Band', 'group2', 'red', 'beta2:ci upper', FALSE)
-p2 <- add_mesh(p2, '95% Loewr Confidence Band', 'group3', 'red', 'beta2:ci lower', FALSE)
+p2 <- add_mesh(p2, '95% Lower Confidence Band', 'group3', 'red', 'beta2:ci lower', FALSE)
 
 
 subplot(p1, p2) %>% 
@@ -197,5 +203,6 @@ layout(annotations = list(
     list(x = 0.2 , y = 0.95, text = "beta1", showarrow = F, xref='paper', yref='paper'),
     list(x = 0.8 , y = 0.95, text = "beta2", showarrow = F, xref='paper', yref='paper'))
 ) %>%
-htmlwidgets::saveWidget("figure3_3d.html")
+htmlwidgets::saveWidget("figure3_3d.html") %>% suppressWarnings()
 
+print('Note these tables are obtained from the pseudo dataset and are not exactly the same as the tables in the paper.')
