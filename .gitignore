@@ -1,5 +1,5 @@
-*.png
-*.html
+code/*.png
+code/*.html
 code/error/
 code/output/
 code/simu_semi_cv/
