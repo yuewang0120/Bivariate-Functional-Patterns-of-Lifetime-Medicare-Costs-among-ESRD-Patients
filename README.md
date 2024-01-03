@@ -10,7 +10,7 @@ The dataset contains the Medicare claims from End-Stage Renal Disease (ESRD) pat
 
 ### Availability
 
-According to the data use agreement, the data cannot be made public. Those who wish to get access to the dataset could visit [USRDS SAFs](https://www.usrds.org/for-researchers/standard-analysis-files/) and submit a request. For reproducibility, we have created datasets that mimics the real USRDS data set used in the paper. The pseudo datasets are publicly available under `data` folder at the time of submission.
+According to the data use agreement, the data cannot be made public. Those who wish to get access to the dataset could visit [USRDS SAFs](https://www.usrds.org/for-researchers/standard-analysis-files/) and submit a request. For reproducibility, we have created datasets that mimics the real USRDS data set used in the paper. The pseudo datasets are publicly available under `data` folder at the time of submission. The pseudo dataset is generated from the models in the paper using coefficients estimates from the original datast and simulated  covariates and errors.
 
 ### Description
 
@@ -20,7 +20,9 @@ See `usrds_desc.txt` under `data` folder.
 
 ### Abstract
 
-Researchers could use the R scripts and Shell scripts to reproduce the results in the paper (including Figures 1-2, Tables 2). However, since Figure 3-5 are generated using the original dataset, they are not reproducible. Readers can generate a pseudo version of Figure 3-5 using the pseudo datasets under folder “data”. The pseudo Figure 3-5 are also provided under “pseudo_figures” folder.
+Researchers could use the R scripts and Shell scripts to reproduce the results in the paper, including Figures 1-2 and Tables 2. Since Figure 3-5 and Table 3-4 are generated using the original dataset, they are not reproducible. Readers can generate a pseudo version of Figure 3-5 and Table 3-4 using the pseudo datasets under `data` folder following the instructions provided below (Step 3 and 4). The pseudo Figure 3-5 are also provided under `pseudo_figures` folder for reference.
+
+As requested by reviewers, we also provide 3D versions of the figures that appear in the paper, which can be found under `3d_figures` folder. Note Figure 3-5 in this folder are generated from the original dataset, which should not be confused with the figures under `pseudo_figures` folder. All the 3D figures are generated using [Plotly](https://github.com/plotly/plotly.R) and provided in the form of HTML files. Since they cannot be viewed directly on GitHub, we suggest downloading and opening them in a browser.
 
 ## Instructions for Use
 
